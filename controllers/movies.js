@@ -9,8 +9,33 @@ const getMovies = (req, res) => Movie.find({})
   .catch((err) => res.status(500).send(err));
 
 const createMovie = (req, res, next) => {
-  const owner = req.user._id;
-  Movie.create({ owner, ...req.body })
+  const {
+    country,
+    director,
+    duration,
+    year,
+    description,
+    image,
+    trailer,
+    nameRU,
+    nameEN,
+    thumbnail,
+    movieId,
+  } = req.body;
+  Movie.create({
+    country,
+    director,
+    duration,
+    year,
+    description,
+    image,
+    trailer,
+    nameRU,
+    nameEN,
+    thumbnail,
+    owner: req.user._id,
+    movieId,
+  })
     .then((movie) => {
       res.status(200).send(movie);
     })
