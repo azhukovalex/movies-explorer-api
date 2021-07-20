@@ -13,32 +13,31 @@ const getCurrentUser = (req, res, next) => {
     .then((user) => res.send({
       email: user.email,
       name: user.name,
+      id: user._id,
     }))
     .catch(next);
 };
 
 const createUser = (req, res, next) => {
   const {
-    email, password, name,
+    name,
+    email,
+    password,
   } = req.body;
-  bcrypt
-    .hash(password, 10)
-    .then((hash) => User.create({
-      email,
-      password: hash,
-      name,
-    }))
-    .catch((err) => {
-      if (err.name === 'MongoError' || err.code === 11000) {
+
+  return User.findOne({ email })
+    .then((user) => {
+      if (user) {
         throw new ConflictError('Пользователь с таким email уже существует');
-      } else next(err);
+      }
+      return bcrypt.hash(password, 8)
+        .then((hash) => User.create({
+          name,
+          email,
+          password: hash,
+        }))
+        .then((data) => res.status(200).send({ email: data.email, name: user.name }));
     })
-    .then((user) => res.status(201).send({
-      data: {
-        name: user.name,
-        email: user.email,
-      },
-    }))
     .catch(next);
 };
 
