@@ -33,11 +33,11 @@ const createMovie = (req, res, next) => {
     nameRU,
     nameEN,
     thumbnail,
-    owner: req.user._id,
     movieId,
+    owner: req.user._id,
   })
-    .then((movie) => {
-      res.status(200).send(movie);
+    .then((movieData) => {
+      res.status(200).send(movieData);
     })
     .catch((err) => {
       if (err) {
